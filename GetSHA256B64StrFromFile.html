@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>on demo</title>  
+  <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+</head>
+<body>
+ 
+<input id="ff" type="file" onchange="ffOnchange(this)">
+ 
+<script>
+async function ffOnchange(input) {
+	console.log('RUN');
+	const file = input.files[0];
+	const encoder = new TextEncoder()
+    const msgUint8 = encoder.encode(new Blob([file]))
+    const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8); // hash the message
+    const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
+    const hashHex = hashArray
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join(""); // convert bytes to hex string
+    const hashBase64 = btoa(hashHex.match(/\w{2}/g).map(function (a) {
+        return String.fromCharCode(parseInt(a, 16));
+    }).join("")); // convert hex to base64
+	console.log(hashBase64);
+}
+</script>
+ 
+</body>
+</html>
